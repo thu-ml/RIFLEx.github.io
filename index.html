@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>RIFLEx: A Free Lunch for Length Extrapolation in Video Diffusion Transformers</title>
+  <link rel="icon" type="image/png" href="images/logo_title.png" sizes="32x38">
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const toggleButton = document.getElementById('toggleButton');
+      const tocContent = document.getElementById('tocContent');
+      const tocHeader = document.querySelector('.toc-header');
+
+      function toggleMenu() {
+        tocContent.classList.toggle('collapsed');
+        toggleButton.textContent = tocContent.classList.contains('collapsed') ? '▶' : '▼';
+      }
+
+      tocHeader.addEventListener('click', toggleMenu);
+    });
+
+  </script>
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['//(', '//)']] // 定义行内公式的定界符（例如 $...$ 或 /(.../)）
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans&family=Noto+Sans&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="preload" href="./static/css/index.css" as="style">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script defer src="./static/js/bulma-carousel.min.js"></script>
+  <script defer src="./static/js/bulma-slider.min.js"></script>
+  <script defer src="./static/js/index.js"></script>
+
+
+</head>
+
+<body>
+
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <div class="has-text-centered">
+              <img src="images/logo_cropped.png" alt="Logo" style="max-height: 50px;">
+            </div>
+            <h4 class="title is-3 publication-title">RIFLEx: A Free Lunch for Length Extrapolation in<br> Video Diffusion Transformers</h4>
+            
+            <div class="is-size-6 publication-authors">
+              <span class="author-block">
+                <a href="https://gracezhao1997.github.io/">Min Zhao</a><sup>1,2</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://guandehe.github.io/">Guande He</a><sup>3</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://github.com/Chyxx">Yixiao Chen</a><sup>1,2</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://zhuhz22.github.io/">Hongzhou Zhu</a><sup>1,2</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://zhenxuan00.github.io/">Chongxuan Li</a><sup>4</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://ml.cs.tsinghua.edu.cn/~jun/index.shtml">Jun Zhu</a><sup>1,2,5</sup>
+              </span>
+            </div>
+            <br>
+
+            <div class="is-size-6 publication-authors">
+              <span class="author-block"><sup>1</sup>THU,</span>
+              <span class="author-block"><sup>2</sup>ShengShu,</span>
+              <span class="author-block"><sup>3</sup>UT-Austin,</span>
+              <span class="author-block"><sup>4</sup>RUC,</span>
+              <span class="author-block"><sup>5</sup>Pazhou Lab</span>
+            </div>
+            <br>
+            <span class="link-block">
+              <a href="" target="_blank" class="external-link ">
+              <span class="icon">
+                <i class="ai ai-arxiv"></i>
+              </span>
+              <span>arXiv</span>
+            </a>
+          </span>
+          &nbsp;&nbsp;
+            <span class="link-block">
+              <a href="" target="_blank" class="external-link ">
+              <span class="icon">
+                <svg class="svg-inline--fa fa-github fa-w-16" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="github" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" data-fa-i2svg=""><path fill="currentColor" d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"></path></svg><!-- <i class="fab fa-github"></i> Font Awesome fontawesome.com -->
+              </span>
+              <span>Code</span>
+            </a>
+          </span>
+
+          <br>
+          <br>
+          <div>
+            <p style="color:black;font-size: 20px; font-weight: bold; color: rgb(25, 100, 201);">
+              <span style="color: black;">TL;DR:</span> Effortlessly extend your video with just one line of code: 
+              <span style="font-family: 'Courier New', Courier, monospace;">freq[k]=(2*np.pi)/(L*s).</span> 
+            </p>
+            
+            
+          </div>
+          
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ********************************************************************主视频****************************************************************************** -->
+  <section class="hero teaser">
+    <div class="container is-max-desktop">
+      <div class="hero-body" id="demo">
+        <!-- <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin-top: 20px;"> -->
+          <iframe width="700" height="400" src="https://www.youtube.com/embed/taofoXDsKGk?si=bgYO83QyiBDGbxsC" title="YouTube video player"
+           frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+           referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+          </iframe>
+        <!-- </div> -->
+
+      
+        <p style="color:black;font-size: 1em; margin-top: 10px; text-align: center;">
+          (This webpage contains a lot of videos. We suggest using Chrome for the best experience.)
+        </p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ********************************************************************菜单****************************************************************************** -->
+  <!-- <section>
+    <nav id="toc">
+      <div class="toc-header">
+        <span>Webpage Menu</span>
+        <button id="toggleButton">▶</button>
+      </div>
+      <ul id="tocContent" class="collapsed">
+        <li><a href="#demo">Top: Demo video</a></li>
+        <li><a href="#abstract">1. Abstract</a></li>
+        <li><a href="#overview">2. CausVid Method Overview</a></li>
+        <li><a href="#result">3. Quantitative Result</a></li>
+        <li><a href="#ui">4. Interactive UI</a></li>
+        <li><a href="#text2short">5. Text to 5-second Short Video Generation</a></li>
+        <li><a href="#text2long">6. Text to 30-second Long Video Generation</a></li>
+        <li><a href="#image2video">7. Zero-shot Image to Video Generation</a></li>
+        <li><a href="#text2shortcomparison">8. Text to Short Video Qualitative Comparison</a></li>
+        <li><a href="#text2longcomparison">9. Text to Long Video Qualitative Comparison</a></li>
+        <li><a href="#ablation">10. Ablation Studies</a></li>
+        <li><a href="#bidir">11. Comparison with Bidirectional Teacher</a></li>
+      </ul>
+    </nav>
+  </section> -->
+
+
+  <section class="hero is-small">
+    <div class="hero-body ">
+      <hr>
+      <div class="container " id="abstract">
+        <h2 id="obj-comparison" class="title is-4 has-text-centered">Overview</h2>
+        <figure class="image is-centered" style="display: flex; justify-content: center; align-items: center;">
+          <img src="images/overview.png" style="width: 70%; height: auto;">
+        </figure>
+        
+        <div class="content has-text-justified" style="font-size: 1.5rem; line-height: 1.8;">
+          <p style="color:black;">
+            <br>
+            <span style="color: rgb(25, 100, 201);font-weight: bold">Motivation:</span>
+            Recent advancements in video generation allow models to create high-quality videos, 
+            but fixed sequence lengths limit their ability to extend content.
+             In this paper, we explore length extrapolation techniques that <span style="font-weight: bold">generate new and temporally coherent content 
+             without longer training videos</span>. Current extrapolation strategies lead to <span style="font-weight: bold">temporal repetition</span> or <span style="font-weight: bold">slow motion</span>,
+              indicating a gap in understanding how positional encodings affect video extrapolation.
+
+            <br>
+            <br>
+            <span style="color: rgb(25, 100, 201);font-weight: bold">Analysis:</span>
+            We systematically analyze the role of individual frequency components in positional, 
+            discovering that high frequencies capture rapid movements and short-term dependencies,
+             inducing temporal repetition, while low frequencies encode long-term dependencies with slow motion. 
+             Furthermore, we surprisingly identify an <span style="font-weight: bold">intrinsic frequency</span> that primarily dictates repetition 
+             patterns among all components during extrapolation.
+             <br>
+             <br>
+             <span style="color: rgb(25, 100, 201);font-weight: bold">Method:</span>
+             Building on these insights, we propose Reducing Intrinsic Frequency for Length Extrapolation (RIFLEx),
+             <span style="font-weight: bold">a minimal yet effective</span> solution that lowers the intrinsic frequency to ensure it remains within a single 
+              cycle after extrapolation, without requiring additional modifications.
+
+         </p>
+         
+        </div>
+
+      </div>
+
+
+      <br>
+      <br>
+      <hr>
+ 
+      <div class="container " id="text2short">
+        <h2 id="obj-comparison" class="title is-4 has-text-centered">Training-free 2× Temporal Extrapolation
+        </h2>
+        <!--****************************************************介绍*******************************************************-->
+        <div class="content has-text-justified" style="font-size: 1.5rem; line-height: 1.8; ">
+          <p style="color:black;">
+            RIFLEx offers a true free lunch—achieving high-quality 2× extrapolation on SOTA video diffusion transformers in a completely 
+            <span style="font-weight: bold">training-free</span> manner. In the following, we present videos extended from 129 to 261 frames at 24 fps.
+          </p>
+        </div>
+      </div>
+
+      <br>
+
+    
+      <div id="results-carousel" class="carousel results-carousel">
+
+        
+      <div class="item">
+        <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+          <source
+            src="videos/free2/seed42_A person in a red tracksuit pours something out of a cup..mp4"
+            type="video/mp4">
+        </video>
+        <p class="prompt-text">A person in a red tracksuit pours something out of a cup.
+        </p>
+      </div>
+
+      <div class="item">
+        <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+          <source
+            src="videos/free2/r049/seed42_A petri dish with a bamboo forest growing within it that has tiny red pandas running around..mp4"
+            type="video/mp4">
+        </video>
+        <p class="prompt-text">A petri dish with a bamboo forest growing within it that has tiny red pandas running around.</p>
+      </div>
+  
+
+        <div class="item">
+          <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/free2/r049/seed42_An animated porcupine with a mix of brown and white fur and prominent quills is seen in a cozy, warm.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">An animated porcupine with a mix of brown and white fur and prominent quills is seen in a cozy, warmly lit interior setting, interacting with a green gift box with a yellow ribbon. The room is filled with wooden furniture and colorful wall decorations, suggesting a cheerful and domestic atmosphere. The porcupine's large eyes and expressive face convey a sense of lightheartedness and curiosity. The camera maintains a low angle, close to the ground, providing an intimate view of the character's actions without any movement, focusing on the playful and curious mood of the scene. The visual style is characteristic of contemporary 3D animation, with vibrant colors and smooth textures that create a polished and engaging look. The scene transitions to an outdoor environment, showcasing a sunny, verdant landscape with rocks, trees, and grass, indicating a natural, possibly forest-like setting. The presence of a small character in the final frame suggests the continuation of a narrative or the introduction of new characters.</p>
+        </div>
+
+        <div class="item">
+          <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/free2/r049/seed42_In a lush meadow, a teenage girl practices yoga on a blanket laid out among wildflowers. She begins .mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">In a lush meadow, a teenage girl practices yoga on a blanket laid out among wildflowers. She begins with simple poses, stretching her arms upwards and bending backwards. Gradually, her routine intensifies; she transitions into more challenging positions, balancing on one leg and twisting her torso. Her breathing remains steady throughout, eyes closed, fully immersed in the moment.</p>
+        </div>
+
+
+
+        <div class="item">
+          <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/free2/r049/seed42_Two men and a woman engage in a conversation within a traditional Korean indoor setting, characteriz.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">Two men and a woman engage in a conversation within a traditional Korean indoor setting, characterized by wooden architecture and natural lighting. The men exhibit a variety of emotions, from shock to amusement, while the woman appears distressed. The camera captures their expressions in medium close-up shots, with a focus on their faces against a softly blurred background, creating an intimate and intense atmosphere. The realistic and cinematic visual style enhances the emotional gravity of the scene.          </p>
+        </div>
+
+        <div class="item">
+          <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/free2/seed42_Several giant wooly mammoths approach treading through a snowy meadow, their long wooly fur lightly .mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">Several giant wooly mammoths approach treading through a snowy meadow, their long wooly fur lightly blows in the wind as they walk, snow covered trees and dramatic snow capped mountains in the distance, mid afternoon light with wispy clouds and a sun high in the distance creates a warm glow, the low camera view is stunning capturing the large furry mammal with beautiful photography, depth of field.
+          </p>
+        </div>
+      </div>
+        
+
+
+      
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item">
+          <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/free2/seed42_A white and orange tabby cat is seen happily darting through a dense garden, as if chasing something.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">A white and orange tabby cat is seen happily darting through a dense garden, as if chasing something. Its eyes are wide and happy as it jogs forward, scanning the branches, flowers, and leaves as it walks. The path is narrow as it makes its way between all the plants. the scene is captured from a ground-level angle, following the cat closely, giving a low and intimate perspective. The image is cinematic with warm tones and a grainy texture. The scattered daylight between the leaves and plants above creates a warm contrast, accentuating the cat’s orange fur. The shot is clear and sharp, with a shallow depth of field.
+          </p>
+        </div>
+
+        <div class="item">
+          <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/free2/seed42_An extreme close-up of an gray-haired man with a beard in his 60s, he is deep in thought pondering t.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">An extreme close-up of an gray-haired man with a beard in his 60s, he is deep in thought pondering the history of the universe as he sits at a cafe in Paris, his eyes focus on people offscreen as they walk as he sits mostly motionless, he is dressed in a wool coat suit coat with a button-down shirt , he wears a brown beret and glasses and has a very professorial appearance, and the end he offers a subtle closed-mouth smile as if he found the answer to the mystery of life, the lighting is very cinematic with the golden light and the Parisian streets and city in the background, depth of field, cinematic 35mm film.
+          </p>
+        </div>
+        <div class="item">
+          <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/free2/r049/seed42_A border collie named Max waits eagerly by the door, tail wagging furiously. As soon as the door ope.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">A border collie named Max waits eagerly by the door, tail wagging furiously. As soon as the door opens, he bounds out into the yard, paws skidding slightly on the smooth patio tiles. He races towards a frisbee thrown by his owner, leaping high into the air to catch it mid-flight. Landing gracefully, he trots back proudly, dropping the frisbee at his owner’s feet, ready for another round.          </p>
+        </div>
+        
+
+        <div class="item">
+          <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/free2/seed42_A person's hand is seen interacting with a black and white toy orca in a staged miniature aquatic en.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">A person's hand is seen interacting with a black and white toy orca in a staged miniature aquatic environment. The scene includes clear blue water, small plastic aquatic plants, and miniature flags with fish symbols, all set against a solid teal background. The playful and imaginative atmosphere is conveyed through the gentle manipulation of the toy, suggesting a storytelling or demonstration context. The camera remains fixed throughout, capturing the scene in a medium shot that focuses on the toy and its immediate surroundings. The visual style is clear and colorful, highlighting the details of the toy and the miniature aquatic setup.
+          </p>
+        </div>
+
+
+        
+        <div class="item">
+          <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/free2/seed42_Animated characters, a rabbit and a mouse, are depicted in a perilous situation, first plummeting th.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">Animated characters, a rabbit and a mouse, are depicted in a perilous situation, first plummeting through a dark, undefined space, and then floating and swimming in a serene underwater environment. The characters are dressed in adventure gear, suggesting a narrative context. The camera closely follows their expressions and movements, capturing the tension and urgency of their situation. The medium and close-up shots emphasize their facial expressions, which convey fear and determination. The visual style is high-quality 3D animation with detailed textures and lighting, creating a cinematic feel.
+          </p>
+        </div>
+
+        <div class="item">
+          <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/free2/seed42_A man with facial hair, dressed in a burgundy shirt, is seen knocking on a weathered wooden door wit.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">A man with facial hair, dressed in a burgundy shirt, is seen knocking on a weathered wooden door with a metal latch and a small window, set in a stone wall. The scene transitions to an indoor setting where the man, now wearing a blue shirt, speaks to the camera in a well-lit room furnished with a couch, a bookshelf, and various decorations. The video captures the man in a medium shot with a stationary camera, conveying a casual and friendly atmosphere in the indoor scene, contrasted with a neutral atmosphere in the outdoor scene. The visual style is realistic with natural lighting and color grading.
+          </p>
+        </div>
+
+      </div>
+
+
+      <div id="results-carousel" class="carousel results-carousel">
+
+        <div class="item">
+          <video id="berliner" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/free2/r049/seed42_At a serene lakeside, an amateur photographer adjusts the settings on his camera, preparing to captu.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">At a serene lakeside, an amateur photographer adjusts the settings on his camera, preparing to capture the sunset. He starts by focusing on the distant horizon, snapping several shots. As the sun sinks lower, he moves closer to the water’s edge, crouching down to frame the reflection of the sky in the lake. Finally, standing up, he captures the final moments of daylight, the sky ablaze with color.          </p>
+        </div>
+
+        <div class="item">
+          <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/free2/seed42_In a forested area, a temporary camp is set up with tents, a dirt ground, and various equipment, inc.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">In a forested area, a temporary camp is set up with tents, a dirt ground, and various equipment, including a four-wheeled vehicle and barrels. A man in a white shirt appears distressed, holding his head, while a woman in a brown dress looks on with concern. The presence of military personnel and civilians suggests a situation of conflict or crisis. The mood is tense and somber, with an undercurrent of urgency or the aftermath of a significant event, as evidenced by the body lying on the ground. The camera maintains a steady, medium-long shot, capturing the expressions and movements of the characters, and the realistic, cinematic visual style enhances the gravity of the scene.
+          </p>
+        </div>
+
+        <div class="item">
+          <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/free2/seed42_In a serene and traditional Japanese environment at night, two animated characters鈥攁 male in traditi.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">In a serene and traditional Japanese environment at night, two animated characters—a male in traditional Japanese armor and a female with white hair in a blue dress—are the focal point of the scene. They are engaged in a calm interaction, with two other female characters in the background, one with blonde hair and another with white hair. The medium shot captures the characters from behind the male character, providing a clear view of their attire and the traditional Japanese architecture around them. The visual style is akin to Japanese anime with 3D elements, and the camera remains in a fixed position throughout the frames, emphasizing the character's dialogue and movements.
+          </p>
+        </div>
+
+
+        <div class="item">
+          <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/free2/seed42_A fawn Pembroke Welsh Corgi walking in Times Square..mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">A fawn Pembroke Welsh Corgi walking in Times Square.
+          </p>
+        </div>
+
+
+
+        <div class="item">
+          <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/free2/seed42_The camera follows behind a white vintage SUV with a black roof rack as it speeds up a steep dirt ro.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">The camera follows behind a white vintage SUV with a black roof rack as it speeds up a steep dirt road surrounded by pine trees on a steep mountain slope, dust kicks up from it’s tires, the sunlight shines on the SUV as it speeds along the dirt road, casting a warm glow over the scene. The dirt road curves gently into the distance, with no other cars or vehicles in sight. The trees on either side of the road are redwoods, with patches of greenery scattered throughout. The car is seen from the rear following the curve with ease, making it seem as if it is on a rugged drive through the rugged terrain. The dirt road itself is surrounded by steep hills and mountains, with a clear blue sky above with wispy clouds.
+          </p>
+        </div>
+
+
+        <div class="item">
+          <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/free2/seed42_A woman and a man are engaged in a dialogue or confrontation within an opulent indoor setting, sugge.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">A woman and a man are engaged in a dialogue or confrontation within an opulent indoor setting, suggested by the blurred background with bokeh light effects. The woman, dressed in a blue traditional outfit with intricate patterns, exudes elegance and poise, indicative of high social status, possibly royalty. Her makeup and hair are styled traditionally. The man, in contrast, has a stern expression, long dark hair, and is adorned with a black hat featuring a white pattern, which may signify his lower social status or warrior status. The close-up shots focus on their faces, capturing the tension and moderate emotional intensity of the scene. The camera remains in a fixed position, emphasizing the characters' expressions and the historical drama's visual style.          </p>
+        </div>
+
+      </div>
+
+
+
+      <!-- <div id="results-carousel" class="carousel results-carousel">
+
+        
+
+        <div class="item">
+          <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/free2/seed42_The Glenfinnan Viaduct is a historic railway bridge in Scotland, UK, that crosses over the west high.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">The Glenfinnan Viaduct is a historic railway bridge in Scotland, UK, that crosses over the west highland line between the towns of Mallaig and Fort William. It is a stunning sight as a steam train leaves the bridge, traveling over the arch-covered viaduct. The landscape is dotted with lush greenery and rocky mountains, creating a picturesque backdrop for the train journey. The sky is blue and the sun is shining, making for a beautiful day to explore this majestic spot.
+          </p>
+        </div>
+        
+        <div class="item">
+          <video id="berliner" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/free2/r049/seed42_At a serene lakeside, an amateur photographer adjusts the settings on his camera, preparing to captu.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">At a serene lakeside, an amateur photographer adjusts the settings on his camera, preparing to capture the sunset. He starts by focusing on the distant horizon, snapping several shots. As the sun sinks lower, he moves closer to the water’s edge, crouching down to frame the reflection of the sky in the lake. Finally, standing up, he captures the final moments of daylight, the sky ablaze with color.          </p>
+        </div>
+        
+        <div class="item">
+          <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/free2/seed42_A person in a red tracksuit pours something out of a cup..mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">A person in a red tracksuit pours something out of a cup.
+          </p>
+        </div>
+
+
+
+
+    
+        <div class="item">
+          <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/free2/seed42_A man with facial hair, dressed in a plaid shirt, is seated playing an acoustic guitar and singing w.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">A man with facial hair, dressed in a plaid shirt, is seated playing an acoustic guitar and singing with visible enjoyment and passion. He is in an indoor setting with a simple gray background, accompanied by a guitar amplifier and a microphone stand to his left, and a stack of "Guitar World" books to his right. The camera maintains a fixed medium shot, capturing his expressive face and hand movements on the guitar strings. The visual quality is clear and unembellished, focusing on the performance without distractions.
+          </p>
+        </div>
+
+
+      </div> -->
+
+
+
+
+
+      <br>
+      <br>
+      <br>
+
+      <hr>
+
+      <div class="container " id="text2long">
+        <h2 id="obj-comparison" class="title is-4 has-text-centered"> 2× Temporal Extrapolation: Fine-tuning 1,000 Steps without Long Videos
+        </h2>
+        <!--****************************************************介绍*******************************************************-->
+        <div class="content has-text-justified" style="font-size: 1.5rem; line-height: 1.8;">
+          <p style="color:black;">
+            When fine-tuning is performed for only 1,000 steps with a batch size of 8 on <span style="font-weight: bold">original-length videos</span>, dynamic quality and visual quality are further improved. Below are videos extended from 129 to 261 frames at 24 fps.
+
+          </p>
+        </div>
+      </div>
+
+      <br>
+
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item">
+          <video id="item" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/finetune2/seed42_Animated characters, a rabbit and a mouse, are depicted in a perilous situation, first plummeting th.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">Animated characters, a rabbit and a mouse, are depicted in a perilous situation, first plummeting through a dark, undefined space, and then floating and swimming in a serene underwater environment. The characters are dressed in adventure gear, suggesting a narrative context. The camera closely follows their expressions and movements, capturing the tension and urgency of their situation. The medium and close-up shots emphasize their facial expressions, which convey fear and determination. The visual style is high-quality 3D animation with detailed textures and lighting, creating a cinematic feel.
+          </p>
+        </div>
+
+        <div class="item">
+          <video id="item" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/finetune2/seed42_A person is seen through circular openings in a dark environment, suggesting a secretive or investig.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">A person is seen through circular openings in a dark environment, suggesting a secretive or investigative scenario. The scene transitions to a nighttime setting where the same person is cautiously looking out of a window, illuminated by the warm glow of interior lighting against the cool darkness of the exterior. The atmosphere is tense and mysterious, with a moderate emotional intensity. The camera employs close-up shots with a shallow depth of field to focus on the subject, creating an intimate and intense viewing experience. The cinematic visual style is characterized by dramatic lighting and color grading that underscores the mood of the scene.
+          </p>
+        </div>
+
+        <div class="item">
+          <video id="item" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/finetune2/seed42_3D animation of a small, round, fluffy creature with big, expressive eyes explores a vibrant, enchan.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">3D animation of a small, round, fluffy creature with big, expressive eyes explores a vibrant, enchanted forest. The creature, a whimsical blend of a rabbit and a squirrel, has soft blue fur and a bushy, striped tail. It hops along a sparkling stream, its eyes wide with wonder. The forest is alive with magical elements: flowers that glow and change colors, trees with leaves in shades of purple and silver, and small floating lights that resemble fireflies. The creature stops to interact playfully with a group of tiny, fairy-like beings dancing around a mushroom ring. The creature looks up in awe at a large, glowing tree that seems to be the heart of the forest.
+          </p>
+        </div>
+
+        <div class="item">
+          <video id="item" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/finetune2/others/seed42_A cat waking up its sleeping owner demanding breakfast. The owner tries to ignore the cat, but the c.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">A cat waking up its sleeping owner demanding breakfast. The owner tries to ignore the cat, but the cat tries new tactics and finally the owner pulls out a secret stash of treats from under the pillow to hold the cat off a little longer.
+          </p>
+        </div>
+ 
+
+      <div class="item">
+        <video id="item" controls preload="metadata" autoplay muted loop playsinline>
+          <source
+            src="videos/finetune2/others/seed42_A close-up of a musician's fingers skillfully moving over a violin's strings during a solo performan.mp4"
+            type="video/mp4">
+        </video>
+        <p class="prompt-text">A close-up of a musician's fingers skillfully moving over a violin's strings during a solo performance.</p>
+      </div>
+  
+
+    <div class="item">
+      <video id="item" controls preload="metadata" autoplay muted loop playsinline>
+        <source
+          src="videos/finetune2/others/seed42_A dog wearing virtual reality goggles in sunset..mp4"
+          type="video/mp4">
+      </video>
+      <p class="prompt-text">A dog wearing virtual reality goggles in sunset.</p>
+    </div>
+  </div>
+
+
+
+
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item">
+          <video id="item" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/finetune2/seed42_In a forested area, a temporary camp is set up with tents, a dirt ground, and various equipment, inc.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">In a forested area, a temporary camp is set up with tents, a dirt ground, and various equipment, including a four-wheeled vehicle and barrels. A man in a white shirt appears distressed, holding his head, while a woman in a brown dress looks on with concern. The presence of military personnel and civilians suggests a situation of conflict or crisis. The mood is tense and somber, with an undercurrent of urgency or the aftermath of a significant event, as evidenced by the body lying on the ground. The camera maintains a steady, medium-long shot, capturing the expressions and movements of the characters, and the realistic, cinematic visual style enhances the gravity of the scene.
+          </p>
+        </div>
+
+        <div class="item">
+          <video id="item" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/finetune2/seed42_Animated characters are engaging in a magical interaction within a dark, cavernous environment. The .mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">Animated characters are engaging in a magical interaction within a dark, cavernous environment. The scene centers on a small, orange magical creature with a glowing heart, as well as two dragon-like creatures, one of which is holding a magical potion. The creature opens the potion, causing a transformation, which captures the attention of the dragons. Subsequently, two human characters with a torch discover the aftermath of the transformation, revealing a small, glowing creature resembling the one from earlier. The atmosphere is whimsical and magical, with a sense of curiosity and discovery. The camera remains static, offering medium shots that focus on the characters and their actions, while the visual style is traditional animation with smooth lines and vibrant colors.
+          </p>
+        </div>
+
+        <div class="item">
+          <video id="item" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/finetune2/seed42_A man with slicked-back hair, dressed in a black period costume, is captured in a medium close-up sh.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">A man with slicked-back hair, dressed in a black period costume, is captured in a medium close-up shot within an opulent interior setting. He wears a white half-face mask that covers the left side of his face, which remains expressionless. The scene is rich with historical or theatrical elements, including candlelight, red drapes, and period-style furniture. The atmosphere is dramatic and tense, with a moderate emotional intensity evident from the man's expressive eyes and the intimate lighting. The camera remains in a fixed position throughout, focusing on the man's upper body and facial expressions, which are central to the narrative. The cinematic visual style emphasizes the period detail and dramatic ambiance of the scene.
+          </p>
+        </div>
+
+        <div class="item">
+          <video id="item" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/finetune2/others/seed42_A man in a formal black suit stands in the entrance of a traditional Korean house, characterized by .mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">A man in a formal black suit stands in the entrance of a traditional Korean house, characterized by wooden architecture and a tiled floor. Household items such as shoes, pots, and a hanging basket are visible, suggesting a lived-in space. The man's expression is neutral, and the overall atmosphere is calm and mild. The camera remains in a fixed position, capturing the scene in a medium shot with natural lighting, indicative of a standard television drama style.
+          </p>
+        </div>
+
+
+
+        <div class="item">
+          <video id="item" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/finetune2/others/seed42_A man in a suit is actively speaking and gesturing in front of an audience in an indoor setting, lik.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">A man in a suit is actively speaking and gesturing in front of an audience in an indoor setting, likely a conference hall or auditorium. The audience members are seated in rows, with varying levels of attention and engagement. The speaker's enthusiastic demeanor suggests a formal and educational event. The camera work consists of medium shots of the speaker and long shots of the audience, with a fixed position and sharp focus. The visual style is standard, with no special effects or cinematic techniques, indicative of a lecture or seminar recording.
+          </p>
+        </div>
+
+
+
+        
+        <div class="item">
+          <video id="item" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/finetune2/others/seed42_A man with facial hair, dressed in a burgundy shirt, is seen knocking on a weathered wooden door wit.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">A man with facial hair, dressed in a burgundy shirt, is seen knocking on a weathered wooden door with a metal latch and a small window, set in a stone wall. The scene transitions to an indoor setting where the man, now wearing a blue shirt, speaks to the camera in a well-lit room furnished with a couch, a bookshelf, and various decorations. The video captures the man in a medium shot with a stationary camera, conveying a casual and friendly atmosphere in the indoor scene, contrasted with a neutral atmosphere in the outdoor scene. The visual style is realistic with natural lighting and color grading.
+          </p>
+        </div>
+
+      </div>
+
+
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item">
+          <video id="item" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/finetune2/395ac65789dd99fff17a1bffbb76e593.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">A man with unkempt brown hair, dressed in a brown jacket and a red neckerchief, is seen interacting with a woman inside a horse-drawn carriage. The setting is outdoors, with historical buildings in the background, suggesting a European town or city from a bygone era. The man's facial expressions convey a sense of urgency and distress, with moderate emotional intensity. The camera work includes close-up shots to emphasize the man's reactions and medium shots to show the interaction with the woman. The focus on the man's face and the coin he examines indicates their significance in the narrative. The visual style is characteristic of a historical drama, with natural lighting and a color scheme that enhances the period feel of the scene.
+          </p>
+        </div>
+        <div class="item">
+          <video id="item" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/finetune2/seed42_A man with facial hair, dressed in a plaid shirt, is seated playing an acoustic guitar and singing w.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">A man with facial hair, dressed in a plaid shirt, is seated playing an acoustic guitar and singing with visible enjoyment and passion. He is in an indoor setting with a simple gray background, accompanied by a guitar amplifier and a microphone stand to his left, and a stack of "Guitar World" books to his right. The camera maintains a fixed medium shot, capturing his expressive face and hand movements on the guitar strings. The visual quality is clear and unembellished, focusing on the performance without distractions.
+          </p>
+        </div>
+        <div class="item">
+          <video id="item" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/finetune2/seed42_In a virtual block-based environment, a group of blue sheep is contained within a wooden pen situate.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">In a virtual block-based environment, a group of blue sheep is contained within a wooden pen situated in a flat, grassy area under a clear sky. The sheep exhibit simple, blocky movements as they are herded and directed by an unseen player. The scene is captured from a fixed first-person perspective, providing a medium to long shot view of the activity. The playful and casual atmosphere is conveyed through the mild emotions of the virtual animal management activity. The visual style is characteristic of a block-based building game, with simple textures and a cubic world design.
+          </p>
+        </div>
+        <div class="item">
+          <video id="item" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/finetune2/others/seed42_An animated character with white hair and a muscular build is shown in a close-up, displaying a ster.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">An animated character with white hair and a muscular build is shown in a close-up, displaying a stern and intense expression. The character is dressed in a red and gold outfit, suggesting a regal or powerful status. The scene transitions to reveal the character seated on a throne-like structure with ornate decorations, addressing a group of people who are standing in front of it. The atmosphere is serious and charged with emotion, indicating a moment of significance or decision-making. The camera focuses on the character's face before widening the shot to include the character's interaction with the group, using fixed position shots without any discernible camera movement. The visual style is characteristic of Japanese anime, with detailed character designs and vibrant coloring.
+          </p>
+        </div>
+
+
+
+        <div class="item">
+          <video id="item" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/finetune2/others/seed42_Two animated characters are engaged in a tense interaction within an ornate indoor setting, possibly.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">Two animated characters are engaged in a tense interaction within an ornate indoor setting, possibly a throne room or chamber. The character with long red hair is dressed in a dark, regal outfit, exuding an air of authority or leadership. The other character, with long purple hair, is adorned in a dark, possibly magical or warrior-like attire, and displays a serious or confrontational demeanor. The camera remains fixed on medium shots, capturing the detailed expressions and gestures of the characters, emphasizing the dramatic tension of the scene. The visual style is characteristic of Japanese anime, with vibrant colors and dynamic character designs that contribute to the overall atmosphere of the video.
+          </p>
+        </div>
+
+
+
+        <div class="item">
+          <video id="item" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/finetune2/others/seed42_Two men and a woman engage in a conversation within a traditional Korean indoor setting, characteriz.mp4"
+              type="video/mp4">
+          </video>
+          <p class="prompt-text">Two men and a woman engage in a conversation within a traditional Korean indoor setting, characterized by wooden architecture and natural lighting. The men exhibit a variety of emotions, from shock to amusement, while the woman appears distressed. The camera captures their expressions in medium close-up shots, with a focus on their faces against a softly blurred background, creating an intimate and intense atmosphere. The realistic and cinematic visual style enhances the emotional gravity of the scene.          </p>
+        
+        </div>
+
+
+      </div>
+
+
+
+
+      <br>
+      <br>
+      <br>
+
+      <hr>
+
+      <div class="container " id="text2long">
+        <h4 id="obj-comparison" class="title is-4 has-text-centered">Spatial and Joint Temporal-spatial Extrapolation
+        </h4>
+        <!--****************************************************介绍*******************************************************-->
+        <div class="content has-text-justified" style="font-size: 1.5rem; line-height: 1.8;">
+          <p style="color:black;">
+            RIFLEx can be extended for spatial resolution extrapolation, as well as for both video duration and resolution. Compared to position extrapolation (PE), we achieve superior visual quality by effectively <span style=" font-weight: bold">addressing repetition issues</span>. Notably, while PE struggles with joint temporal-spatial extrapolation, our RIFLEx still delivers high-quality results.</p>
+        </div>
+      </div>
+
+      <br>
+      <div class="columns is-centered has-text-centered">
+        <div class="column">
+          <p style="color:black;font-size: 20px;">Normal size&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<br>480$\times$720&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
+        </div>
+        <div class="column">
+          <p style="color:black;font-size: 20px;">PE&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<br>480$\times$1440&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
+        </div>
+        <div class="column">
+          <p style="color:black;font-size: 20px;"><span style=" font-weight: bold">RIFLEx (Ours)&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span><br>480$\times$1440&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
+        </div>
+      </div>
+      
+      <div id="results-carousel"
+        style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+        <div class="item" style="flex: 1; display: flex; flex-direction: column">
+          <img src="images/spatial/2Wnormal.png" alt="Comparison Image" style="width: 90%; height: auto;">
+        </div>
+
+        <div class="item" style="flex: 1; display: flex; flex-direction: column">
+          <img src="images/spatial/2Wbase.png" alt="Comparison Image" style="width: 90%; height: auto;">
+        </div>
+
+        <div class="item" style="flex: 1; display: flex; flex-direction: column">
+          <img src="images/spatial/2Wours.png" alt="Comparison Image" style="width: 90%; height: auto;">
+        </div>
+      
+      </div>
+
+      <br>
+      <div class="columns is-centered has-text-centered">
+        <div class="column">
+          <p style="color:black;font-size: 20px;">Normal size&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<br>480$\times$720&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
+        </div>
+        <div class="column">
+          <p style="color:black;font-size: 20px;">PE&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<br>960$\times$720&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
+        </div>
+        <div class="column">
+          <p style="color:black;font-size: 20px;"><span style=" font-weight: bold">RIFLEx (Ours)&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span><br>960$\times$720&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
+        </div>
+      </div>
+
+      <div id="results-carousel"
+        style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+        <div class="item" style="flex: 1; display: flex; flex-direction: column">
+          <img src="images/spatial/2Hnormal.png" alt="Comparison Image" style="width: 90%; height: auto;">
+        </div>
+
+        <div class="item" style="flex: 1; display: flex; flex-direction: column">
+          <img src="images/spatial/2Hbase.png" alt="Comparison Image" style="width: 90%; height: auto;">
+        </div>
+
+        <div class="item" style="flex: 1; display: flex; flex-direction: column">
+          <img src="images/spatial/2Hours.png" alt="Comparison Image" style="width: 90%; height: auto;">
+        </div>
+      
+      </div>
+
+      <br>
+      <div class="columns is-centered has-text-centered">
+        <div class="column">
+          <p style="color:black;font-size: 20px;">Normal size&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<br>480$\times$720&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
+        </div>
+        <div class="column">
+          <p style="color:black;font-size: 20px;">PE&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<br>960$\times$1440&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
+        </div>
+        <div class="column">
+          <p style="color:black;font-size: 20px;"><span style=" font-weight: bold">RIFLEx (Ours)&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span><br>960$\times$1440&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
+        </div>
+      </div>
+
+      
+
+      <div id="results-carousel"
+        style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+        <div class="item" style="flex: 1; display: flex; flex-direction: column">
+          <img src="images/spatial/2HWnormal1.png" alt="Comparison Image" style="width: 90%; height: auto;">
+        </div>
+
+        <div class="item" style="flex: 1; display: flex; flex-direction: column">
+          <img src="images/spatial/2HWbase1.png" alt="Comparison Image" style="width: 90%; height: auto;">
+        </div>
+
+        <div class="item" style="flex: 1; display: flex; flex-direction: column">
+          <img src="images/spatial/2HWours1.png" alt="Comparison Image" style="width: 90%; height: auto;">
+        </div>
+      
+      </div>
+
+      <div id="results-carousel"
+      style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+      <div class="item" style="flex: 1; display: flex; flex-direction: column">
+        <img src="images/spatial/2HWnormal2.png" alt="Comparison Image" style="width: 90%; height: auto;">
+      </div>
+
+      <div class="item" style="flex: 1; display: flex; flex-direction: column">
+        <img src="images/spatial/2HWbase2.png" alt="Comparison Image" style="width: 90%; height: auto;">
+      </div>
+
+      <div class="item" style="flex: 1; display: flex; flex-direction: column">
+        <img src="images/spatial/2HWours2.png" alt="Comparison Image" style="width: 90%; height: auto;">
+      </div>
+    
+    </div>
+
+    <br>
+
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <p style="color:black;font-size: 20px;">Normal size&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<br>480$\times$720$\times$49&nbsp&nbsp&nbsp&nbsp&nbsp</p>
+      </div>
+      <div class="column">
+        <p style="color:black;font-size: 20px;">PE&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<br>960$\times$1440$\times$97&nbsp&nbsp&nbsp&nbsp</p>
+      </div>
+      <div class="column">
+        <p style="color:black;font-size: 20px;"><span style=" font-weight: bold">RIFLEx (Ours)&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span><br>960$\times$1440$\times$97&nbsp&nbsp&nbsp&nbsp</p>
+      </div>
+    </div>
+
+
+    <div id="results-carousel"
+    style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+ <div class="item" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+   <video controls preload="metadata" autoplay muted loop playsinline
+          style="width: 90%; height: 90%; margin:0px;">
+     <source src="images/spatial/demo1_normal.mp4" type="video/mp4">
+   </video>
+ </div>
+ <div class="item" style="flex: 1; display: flex; flex-direction: column">
+   <video controls preload="metadata" autoplay muted loop playsinline
+          style="width: 90%; height: 90%; margin: 0px;">
+     <source src="images/spatial/demo1_baseline.mp4" type="video/mp4">
+   </video>
+ </div>
+ <div class="item" style="flex: 1; display: flex; flex-direction: column">
+  <video controls preload="metadata" autoplay muted loop playsinline
+        style="width: 90%; height: 90%; margin:0px;">
+     <source src="images/spatial/demo1_ours.mp4" type="video/mp4">
+   </video>
+ </div>
+</div>
+
+
+<div id="results-carousel"
+style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+<div class="item" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+<video controls preload="metadata" autoplay muted loop playsinline
+      style="width: 90%; height: 90%; margin:0px;">
+ <source src="images/spatial/demo2_normal.mp4" type="video/mp4">
+</video>
+</div>
+<div class="item" style="flex: 1; display: flex; flex-direction: column">
+<video controls preload="metadata" autoplay muted loop playsinline
+      style="width: 90%; height: 90%; margin: 0px;">
+ <source src="images/spatial/demo2_baseline.mp4" type="video/mp4">
+</video>
+</div>
+<div class="item" style="flex: 1; display: flex; flex-direction: column">
+<video controls preload="metadata" autoplay muted loop playsinline
+    style="width: 90%; height: 90%; margin:0px;">
+ <source src="images/spatial/demo2_ours.mp4" type="video/mp4">
+</video>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+      </div>
+<!-- ********************************************************************* 方法对比之一 ************************************************************************* -->
+      <br>
+      <br>
+      <br>
+
+      <hr>
+      <div class="container " id="text2shortcomparison">
+        <h4 id="obj-comparison" class="title is-4 has-text-centered">Temporal Extrapolation Comparsions</h4>
+        <!-- ****************************************************************介绍****************************************************************************** -->
+        <div class="content has-text-justified" style="font-size: 1.5rem; line-height: 1.8;">
+          <p style="color:black;">
+            We compare popular length extrapolation methods in LLMs and image diffusion transformers, which often introduce <span style="font-weight: bold">temporal repetition or motion deceleration</span>. In contrast, our approach generates new, temporally coherent content that evolves smoothly, delivering superior performance. Below, <span style="font-weight: bold">we highlight repeated frames with a red box</span>, which are identical to the initial frames of the video. 
+        
+            
+          </p>
+        </div>
+      </div>
+
+      <br>
+
+      
+      
+      <div class="columns is-centered has-text-centered">
+        <div class="column">
+          <p style="color:black;font-size: 20px;">&nbsp;PE&nbsp;</p>
+        </div>
+        <div class="column">
+          <p style="color:black;font-size: 20px;">&nbsp;PI&nbsp;</p>
+        </div>
+        <div class="column">
+          <p style="color:black;font-size: 20px;">TASR</p>
+        </div>
+        <div class="column">
+          <p style="color:black;font-size: 20px;">YaRN&nbsp;&nbsp;</p>
+        </div>
+        <div class="column">
+          <p style="color:black;font-size: 20px; font-weight: bold">RIFLEx (Ours)</p>
+        </div>
+      </div>
+
+      <div id="results-carousel"
+        style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0px;">
+        <div class="item" style="flex: 1; display: flex; flex-direction: column">
+          <video controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/comparison/PEnew.mp4"
+              type="video/mp4">
+          </video>
+        </div>
+        <div class="item" style="flex: 1; display: flex; flex-direction: column">
+          <video controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/comparison/PInew.mp4"
+              type="video/mp4">
+          </video>
+        </div>
+        <div class="item" style="flex: 1; display: flex; flex-direction: column">
+          <video controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/comparison/TAnew.mp4"
+              type="video/mp4">
+          </video>
+        </div>
+        <div class="item" style="flex: 1; display: flex; flex-direction: column">
+          <video controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/comparison/Yarnnew.mp4"
+              type="video/mp4">
+          </video>
+        </div>
+        <div class="item" style="flex: 1; display: flex; flex-direction: column">
+          <video controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/comparison/oursnew.mp4"
+              type="video/mp4">
+          </video>
+        </div>
+      </div>
+
+<!-- 
+      <br>
+
+
+      <div id="results-carousel"
+        style="display: flex; justify-content: space-between; align-items: flex-start; gap: 5px;">
+        <div class="item" style="flex: 1; display: flex; flex-direction: column">
+          <video controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/comparison/PE2.mp4"
+              type="video/mp4">
+          </video>
+        </div>
+        <div class="item" style="flex: 1; display: flex; flex-direction: column">
+          <video controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/comparison/PI2.mp4"
+              type="video/mp4">
+          </video>
+        </div>
+        <div class="item" style="flex: 1; display: flex; flex-direction: column">
+          <video controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/comparison/TA2.mp4"
+              type="video/mp4">
+          </video>
+        </div>
+        <div class="item" style="flex: 1; display: flex; flex-direction: column">
+          <video controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/comparison/YaRN2.mp4"
+              type="video/mp4">
+          </video>
+        </div>
+        <div class="item" style="flex: 1; display: flex; flex-direction: column">
+          <video controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/comparison/ours2.mp4"
+              type="video/mp4">
+          </video>
+        </div>
+      </div> -->
+     
+      <div class="columns is-centered has-text-centered">
+        <div class="column">
+          <p style="color:black;font-size: 20px;">Repetition</p>
+        </div>
+        <div class="column">
+          <p style="color:black;font-size: 20px;">Slower Motion</p>
+        </div>
+        <div class="column">
+          <p style="color:black;font-size: 20px;">Slower Motion</p>
+        </div>
+        <div class="column">
+          <p style="color:black;font-size: 20px;">Slower Motion</p>
+        </div>
+        <div class="column">
+          <p style="color:black;font-size: 20px; font-weight: bold"></p>
+        </div>
+      </div>
+
+
+      <br>
+      <div class="container " id="text2shortcomparison">
+        <div class="content has-text-justified" style="font-size: 1.5rem; line-height: 1.8;">
+           <p style="color:black;">
+             While the NTK in HunyuanVideo coincidentally avoids repetition at 2× extrapolation, this stems from an unintended effect that happens to satisfy the non-repetition condition rather than its intended mechanism. At longer extrapolations (e.g., 2.3×), significant repetition still occurs.
+ 
+           </p>
+         </div>
+       </div>
+       <br>
+      <div id="results-carousel" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 5px; position: relative;">
+        <div class="item" style="flex: 1; display: flex; flex-direction: column; position: relative;">
+          <div class="has-text-centered">
+            <img src="images/logo/ntk.png" alt="Logo" style="max-height: auto;">
+          </div>
+        </div>
+        <div class="item" style="flex: 3; display: flex; flex-direction: column;">
+          <video controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/comparison/NTK/NTK.mp4"
+              type="video/mp4">
+          </video>
+        </div>
+        <!-- <div class="item" style="flex: 1; display: flex; flex-direction: column">
+          <video controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/comparison/NTK/NTK2.mp4"
+              type="video/mp4">
+          </video>
+        </div>
+        <div class="item" style="flex: 1; display: flex; flex-direction: column">
+          <video controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/comparison/NTK/NTK3.mp4"
+              type="video/mp4">
+          </video>
+        </div> -->
+        <div class="item" style="flex: 1; display: flex; flex-direction: column; position: relative;">
+          <div class="has-text-centered">
+            <img src="images/logo/repetition.png" alt="Logo" style="max-height: auto;">
+          </div>
+        </div>
+      </div>
+
+
+      <div id="results-carousel"
+      style="display: flex; justify-content: space-between; align-items: stretch; gap: 5px;"><!-- 修改align-items为stretch -->
+      <div class="item" style="flex: 1; display: flex; flex-direction: column; position: relative;"><!-- flex设为1 -->
+        <div class="has-text-centered">
+          <img src="images/logo/ours.png" alt="Logo" style="max-height: auto;">
+        </div>
+      </div>
+      <div class="item" style="flex: 3; display: flex; flex-direction: column"><!-- flex设为3 -->
+        <video controls preload="metadata" autoplay muted loop playsinline
+               style="height: 100%; object-fit: contain"><!-- 添加高度控制 -->
+          <source src="videos/comparison/NTK/ours.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="item" style="flex: 1; display: flex; flex-direction: column"><!-- flex设为1 -->
+       
+      </div>
+    </div>
+<!-- ***************************************************************两列对比**************************************************************** -->
+      
+      <!-- <br>
+      <br>
+      <br>
+      <hr>
+      <div class="container " id="ablation">
+        <h2 id="obj-comparison" class="title is-3 has-text-centered">两列对比</h2>
+        <div class="content has-text-justified" style="font-size: 1.5rem; line-height: 1.8;">
+          <p style="color:black;">
+            两列对比文字
+          </p>
+        </div>
+      </div>
+
+      <br>
+      <br>
+      <br>
+
+      <div class="columns is-centered has-text-centered">
+        <div class="column">
+          <p style="color:black;font-size: 20px;">&nbsp;NTK&nbsp;</p>
+        </div>
+        <div class="column">
+          <p style="color:black;font-size: 20px; font-weight: bold">RIFLEx (Ours)</p>
+        </div>
+      </div>
+
+      <div id="results-carousel"
+        style="display: flex; justify-content: space-between; align-items: flex-start; gap: 100px;">
+        <div class="item" style="flex: 1; display: flex; flex-direction: column; gap: 20px;">
+          <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/comparison/NTK/NTK1.mp4"
+              type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item" style="flex: 1; display: flex; flex-direction: column; gap: 20px;">
+          <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/comparison/NTK/ours1.mp4"
+              type="video/mp4">
+          </video>
+        </div>
+      </div>
+
+      <br>
+
+      <div id="results-carousel"
+        style="display: flex; justify-content: space-between; align-items: flex-start; gap: 100px;">
+        <div class="item" style="flex: 1; display: flex; flex-direction: column; gap: 20px;">
+          <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/comparison/NTK/NTK2.mp4"
+              type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item" style="flex: 1; display: flex; flex-direction: column; gap: 20px;">
+          <video id="cereal" controls preload="metadata" autoplay muted loop playsinline>
+            <source
+              src="videos/comparison/NTK/ours2.mp4"
+              type="video/mp4">
+          </video>
+        </div>
+      </div> -->
+
+  </section>
+
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <h2 class="title">BibTeX</h2>
+      <pre><code>
+        @article{zhao2025RIFLEx,
+          title={RIFLEx: A Free Lunch for Length Extrapolation in Video Diffusion Transformers}, 
+          author={Min Zhao and Guande He and Yixiao Chen and Hongzhou Zhu and Chongxuan Li and Jun Zhu},
+          year={2025},
+          journal={arXiv:2502.09535},
+        }
+  </code></pre>
+    </div>
+  </section>
+
+
+  <footer class="footer">
+    <div class="container" align="center">
+      <div class="column is-8">
+        <div class="content">
+          <p style="color:black;">
+            This website template is borrowed from <a href="https://causvid.github.io/">CausVid</a> and <a href="https://fate-zero-edit.github.io/">Fate/Zero</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var videos = document.querySelectorAll('#results-carousel video');
+
+      videos.forEach(function (video) {
+        var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+        if (!isMobile) {
+          if (!video.classList.contains('single_image_video')) {
+            video.setAttribute('autoplay', 'autoplay');
+          }
+        } else {
+          console.log('Autoplay disabled for mobile devices');
+        }
+      });
+    });
+  </script>
+
+</body>
+
+</html>
